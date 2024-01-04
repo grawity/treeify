@@ -1,0 +1,42 @@
+#!/usr/bin/env perl
+# ldifls -- convert LDIF output to a plain list of DNs
+use v5.10;
+use Getopt::Long qw(:config bundling no_ignore_case);
+use Net::LDAP::LDIF;
+use Net::LDAP::Util qw(escape_dn_value ldap_explode_dn);
+
+sub usage {
+	print "$_\n" for
+	"Usage: ldapsearch -LLL | ldifls [-s SEP] [-S SEP]",
+	"",                           #
+	"  -s, --rdn-separator SEP    Separator between DN elements (RDNs)",
+	"  -S, --attr-separator SEP   Separator between RDN attributes (default '+')",
+	;
+}
+
+my $rdn_sep = undef;
+my $attr_sep = "+";
+
+GetOptions(
+	"help" => sub { usage(); exit; },
+	"s|rdn-separator=s" => \$rdn_sep,
+	"S|attr-separator=s" => \$attr_sep,
+) or exit(2);
+
+my $ldif = Net::LDAP::LDIF->new(\*STDIN);
+
+while (!$ldif->eof) {
+	my $e = $ldif->read_entry();
+	my $dn = $e->dn;
+	if (defined $rdn_sep) {
+		my @dn = @{ldap_explode_dn($dn, casefold => "none")};
+		@dn = map {
+			my $rdn = $_;
+			join($attr_sep, map {
+				$_."=".escape_dn_value($rdn->{$_})
+			} keys %$_)
+		} @dn;
+		$dn = join($rdn_sep, @dn);
+	}
+	print "$dn\n";
+}
