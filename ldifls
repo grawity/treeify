@@ -38,7 +38,7 @@ while (!$ldif->eof) {
 			my $rdn = $_;
 			join($attr_sep, map {
 				$_."=".escape_dn_value($rdn->{$_})
-			} keys %$_)
+			} sort keys %$_)
 		} @dn;
 		$dn = join($rdn_sep, @dn);
 	}
