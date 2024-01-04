@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# treeify - display a list of files as a tree
+# treeify -- display a list of files as a tree
 # (c) 2013-2016 Mantas Mikulėnas <grawity@gmail.com>
 # Released under the MIT License (dist/LICENSE.mit)
 use v5.10;
@@ -222,7 +222,7 @@ GetOptions(
 	"g|no-ghosts" => \$opt{no_ghosts},
 	"r|fake-root=s" => \$opt{fake_root},
 	"R|reverse" => \$opt{reverse},
-	"s|separator=s" => \$opt{sep},
+	"s|separator=s" => \$opt{separator},
 	"y|style=s" => \$opt{style},
 	# Handle oldstyle digit options such as '-10'
 	map {
