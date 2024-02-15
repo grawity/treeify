@@ -142,21 +142,25 @@ sub show {
 			$n_children = deepcount($node);
 		}
 
+		# Display full path of the current node
+		my $fullname;
+		if ($path eq "") {
+			$fullname = $name;
+		} elsif ($path eq $opt{separator}) {
+			$fullname = $opt{reverse}
+			          ? $name.$path
+			          : $path.$name;
+		} elsif ($depth > $skip_path_levels) {
+			$fullname = $opt{reverse}
+			          ? $name.$opt{separator}.$path
+			          : $path.$opt{separator}.$name;
+		}
+
 		my $print_full = ($opt{print_full} == 2) ? $exists
 		               : ($opt{print_full} == 1) ? 1
 		               : 0;
-
 		if ($print_full) {
-			# Display full path of the current node
-			if ($path eq $opt{separator}) {
-				$name = $opt{reverse}
-					? $name.$path
-					: $path.$name;
-			} elsif ($depth > $skip_path_levels) {
-				$name = $opt{reverse}
-					? $name.$opt{separator}.$path
-					: $path.$opt{separator}.$name;
-			}
+			$name = $fullname;
 		}
 
 		if ($depth > 0) {
@@ -198,7 +202,7 @@ sub show {
 		}
 		print "$line_str\n";
 
-		show($node, $seen, $depth+1, $graph, $name) if !$at_max_depth;
+		show($node, $seen, $depth+1, $graph, $fullname) if !$at_max_depth;
 	}
 
 	pop @$graph;
