@@ -142,7 +142,11 @@ sub show {
 			$n_children = deepcount($node);
 		}
 
-		if ($opt{print_full}) {
+		my $print_full = ($opt{print_full} == 2) ? $exists
+		               : ($opt{print_full} == 1) ? 1
+		               : 0;
+
+		if ($print_full) {
 			# Display full path of the current node
 			if ($path eq $opt{separator}) {
 				$name = $opt{reverse}
